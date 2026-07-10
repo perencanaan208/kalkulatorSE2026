@@ -398,14 +398,14 @@
           <span class="lbl">Total Pengeluaran 5 Usaha (setahun)</span>
           <span class="val" id="sumPengeluaranTahun">Rp 0</span>
         </div>
+        <div class="summary-line">
+          <span class="lbl">Total Laba Usaha (setahun)</span>
+          <span class="val" id="sumLabaUsaha">Rp 0</span>
+        </div>
         <div class="summary-hero">
           <span class="lbl">Pendapatan Usaha Total (Rata-rata per Bulan)</span>
           <span class="val" id="rataRataBulan">Rp 0</span>
-          <div class="formula">Total pendapatan 5 usaha setahun ÷ 12 bulan</div>
-        </div>
-        <div class="summary-net">
-          <span class="lbl">Perkiraan pendapatan bersih / bulan</span>
-          <span class="val" id="netBulan">Rp 0</span>
+          <div class="formula">Total laba usaha setahun ÷ 12 bulan</div>
         </div>
       </div>
     </div>
@@ -607,17 +607,16 @@
       totalExpenseYear += parseRaw(expEl);
       totalIncomeYear += parseRaw(incEl);
     }
-    var avgPerMonth = totalIncomeYear / 12;
-    var netPerMonth = (totalIncomeYear - totalExpenseYear) / 12;
+    var totalLabaUsaha = totalIncomeYear - totalExpenseYear;
+    var avgPerMonth = totalLabaUsaha / 12;
 
     document.getElementById("sumPendapatanTahun").textContent = fmtRupiah(totalIncomeYear);
     document.getElementById("sumPengeluaranTahun").textContent = fmtRupiah(totalExpenseYear);
+    document.getElementById("sumLabaUsaha").textContent = fmtRupiah(totalLabaUsaha);
 
     var rataEl = document.getElementById("rataRataBulan");
     rataEl.textContent = fmtRupiah(avgPerMonth);
     pulse(rataEl);
-
-    document.getElementById("netBulan").textContent = fmtRupiah(netPerMonth);
   }
 
   function showTab(n){
