@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+<title>Kalkulator Sensus Ekonomi 2026 — Baleharjo & Gebang</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0F3C5E;
+    --navy-deep:#0A2C46;
+    --navy-light:#1D6FA5;
+    --amber:#E4972E;
+    --amber-deep:#C97A16;
+    --amber-tint:#FCF1DE;
+    --green:#1F8A5F;
+    --green-tint:#E7F5EF;
+    --clay:#B23A48;
+    --clay-tint:#FBECEC;
+    --bg:#EFF4F9;
+    --surface:#FFFFFF;
+    --ink:#152331;
+    --muted:#5D7488;
+    --border:#DEE7EF;
+    --radius-lg:20px;
+    --radius-md:14px;
+    --radius-sm:10px;
+    --shadow-sm: 0 2px 8px rgba(15,44,70,0.06);
+    --shadow-md: 0 10px 28px rgba(15,44,70,0.12);
+    --ff-head:'Space Grotesk', sans-serif;
+    --ff-body:'Inter', sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:var(--ff-body);
+    background:var(--bg);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+    padding-bottom:110px;
+  }
+  .app{
+    max-width:480px;
+    margin:0 auto;
+    min-height:100vh;
+    background:var(--bg);
+    position:relative;
+  }
+
+  /* ---------- HEADER ---------- */
+  .app-header{
+    position:relative;
+    background:linear-gradient(150deg, var(--navy-deep) 0%, var(--navy) 55%, var(--navy-light) 100%);
+    color:#fff;
+    padding:22px 20px 26px;
+    border-radius:0 0 26px 26px;
+    overflow:hidden;
+    box-shadow:var(--shadow-md);
+  }
+  .app-header::before{
+    content:"";
+    position:absolute; inset:0;
+    background-image:
+      radial-gradient(circle at 15% 20%, rgba(228,151,46,0.16) 0, transparent 42%),
+      radial-gradient(circle at 85% 0%, rgba(255,255,255,0.10) 0, transparent 40%),
+      repeating-radial-gradient(circle at 50% 50%, rgba(255,255,255,0.045) 0 2px, transparent 2px 26px);
+    pointer-events:none;
+  }
+  .header-top{
+    position:relative;
+    display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+  }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:6px;
+    font-family:var(--ff-head);
+    font-size:11px; letter-spacing:.12em; font-weight:600;
+    background:rgba(255,255,255,0.14);
+    border:1px solid rgba(255,255,255,0.25);
+    padding:4px 10px; border-radius:999px;
+    text-transform:uppercase;
+  }
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--amber);}
+  h1.title{
+    font-family:var(--ff-head);
+    font-size:22px; line-height:1.25; font-weight:700;
+    margin:10px 0 4px; position:relative;
+  }
+  .subtitle{
+    font-size:13px; color:rgba(255,255,255,0.78); position:relative; margin:0;
+  }
+  .icon-btn{
+    width:40px;height:40px; flex:0 0 auto;
+    border-radius:12px;
+    background:rgba(255,255,255,0.12);
+    border:1px solid rgba(255,255,255,0.22);
+    display:flex; align-items:center; justify-content:center;
+    color:#fff; cursor:pointer;
+    transition:background .15s ease, transform .1s ease;
+  }
+  .icon-btn:active{ transform:scale(0.94); background:rgba(255,255,255,0.22); }
+  .icon-btn svg{width:19px;height:19px;}
+
+  /* ---------- IDENTITY CARD ---------- */
+  .identity-card{
+    position:relative;
+    margin:-16px 16px 0;
+    background:var(--surface);
+    border-radius:var(--radius-md);
+    box-shadow:var(--shadow-sm);
+    border:1px solid var(--border);
+    padding:14px 16px;
+    display:flex; flex-direction:column; gap:10px;
+    z-index:2;
+  }
+  .identity-row{display:flex; gap:10px;}
+  .identity-row > div{flex:1;}
+  .village-toggle{
+    display:flex; background:var(--bg); border-radius:999px; padding:3px; border:1px solid var(--border);
+  }
+  .village-toggle button{
+    flex:1; border:none; background:transparent; padding:8px 6px;
+    font-family:var(--ff-body); font-weight:600; font-size:12.5px; color:var(--muted);
+    border-radius:999px; cursor:pointer; transition:all .15s ease;
+  }
+  .village-toggle button.active{
+    background:var(--navy); color:#fff; box-shadow:var(--shadow-sm);
+  }
+  .mini-input{
+    width:100%; border:1px solid var(--border); border-radius:var(--radius-sm);
+    padding:9px 11px; font-size:13px; font-family:var(--ff-body); color:var(--ink);
+    background:var(--bg);
+  }
+  .mini-input:focus{ outline:2px solid var(--navy-light); outline-offset:1px; background:#fff; }
+  .mini-label{
+    font-size:10.5px; font-weight:700; letter-spacing:.05em; text-transform:uppercase;
+    color:var(--muted); margin-bottom:5px; display:block;
+  }
+
+  /* ---------- TABS ---------- */
+  .tabs-wrap{ padding:16px 16px 0; }
+  .tabs-scroll{
+    display:flex; gap:8px; overflow-x:auto; padding-bottom:4px; -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+  .tabs-scroll::-webkit-scrollbar{display:none;}
+  .tab-btn{
+    flex:0 0 auto;
+    display:flex; align-items:center; gap:7px;
+    padding:9px 14px; border-radius:999px;
+    background:var(--surface); border:1px solid var(--border);
+    font-family:var(--ff-head); font-weight:600; font-size:13px; color:var(--muted);
+    cursor:pointer; transition:all .15s ease; white-space:nowrap;
+  }
+  .tab-btn .num{
+    width:20px;height:20px;border-radius:50%;
+    background:var(--bg); color:var(--muted);
+    display:flex;align-items:center;justify-content:center;
+    font-size:11px; font-weight:700; transition:all .15s ease;
+  }
+  .tab-btn.active{
+    background:var(--navy); border-color:var(--navy); color:#fff;
+  }
+  .tab-btn.active .num{ background:var(--amber); color:var(--navy-deep); }
+  .tab-btn.filled:not(.active) .num{ background:var(--green); color:#fff; }
+  .tab-btn.filled:not(.active){ border-color:var(--green); color:var(--green); }
+
+  /* ---------- PANELS / CARDS ---------- */
+  main{ padding:14px 16px 4px; }
+  .panel{ display:none; animation:fadeIn .22s ease; }
+  .panel.active{ display:block; }
+  @keyframes fadeIn{ from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);} }
+
+  .section-card{
+    background:var(--surface); border-radius:var(--radius-lg);
+    border:1px solid var(--border); box-shadow:var(--shadow-sm);
+    margin-bottom:14px; overflow:hidden;
+  }
+  .section-head{
+    display:flex; align-items:center; gap:10px;
+    padding:14px 16px; border-bottom:1px dashed var(--border);
+  }
+  .section-head .swatch{
+    width:34px;height:34px;border-radius:10px;
+    display:flex;align-items:center;justify-content:center; flex:0 0 auto;
+  }
+  .section-head .swatch svg{ width:18px; height:18px; }
+  .section-card.expense .swatch{ background:var(--clay-tint); color:var(--clay); }
+  .section-card.income .swatch{ background:var(--green-tint); color:var(--green); }
+  .section-head .head-text h2{
+    font-family:var(--ff-head); font-size:14.5px; font-weight:700; margin:0;
+    letter-spacing:.02em; color:var(--ink);
+  }
+  .section-head .head-text p{ margin:1px 0 0; font-size:11.5px; color:var(--muted); }
+
+  .field-list{ padding:6px 16px 4px; }
+  .field{ display:block; padding:10px 0; border-bottom:1px solid #F1F5F9; }
+  .field:last-child{ border-bottom:none; }
+  .field-label{
+    display:block; font-size:13px; font-weight:600; color:var(--ink); margin-bottom:6px;
+  }
+  .field-label small{
+    display:block; font-weight:400; font-size:11px; color:var(--muted); margin-top:2px;
+  }
+  .input-wrap{ position:relative; }
+  input.money{
+    width:100%; border:1.5px solid var(--border); border-radius:var(--radius-sm);
+    padding:11px 13px; font-family:var(--ff-body); font-weight:700; font-size:14.5px;
+    color:var(--navy-deep); background:var(--bg);
+    font-variant-numeric:tabular-nums;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  input.money::placeholder{ color:#9FB2C2; font-weight:500; }
+  input.money:focus{ outline:none; border-color:var(--navy-light); background:#fff; box-shadow:0 0 0 3px rgba(29,111,165,0.12); }
+
+  .total-row{
+    display:flex; align-items:center; justify-content:space-between;
+    margin:4px 16px 16px; padding:13px 14px; border-radius:var(--radius-md);
+  }
+  .section-card.expense .total-row{ background:var(--clay-tint); }
+  .section-card.income .total-row{ background:var(--green-tint); }
+  .total-row .t-label{ font-size:12.5px; font-weight:700; color:var(--muted); }
+  .total-row .t-value{
+    font-family:var(--ff-head); font-size:17px; font-weight:700; font-variant-numeric:tabular-nums;
+  }
+  .section-card.expense .total-row .t-value{ color:var(--clay); }
+  .section-card.income .total-row .t-value{ color:var(--green); }
+
+  /* ---------- SUMMARY ---------- */
+  .summary-card{
+    background:linear-gradient(155deg, var(--navy-deep), var(--navy) 60%, var(--navy-light));
+    border-radius:var(--radius-lg);
+    color:#fff; padding:18px 18px 16px; margin:6px 0 16px;
+    box-shadow:var(--shadow-md);
+    position:relative; overflow:hidden;
+  }
+  .summary-card::after{
+    content:""; position:absolute; inset:0;
+    background-image: repeating-radial-gradient(circle at 90% 10%, rgba(255,255,255,0.05) 0 2px, transparent 2px 24px);
+    pointer-events:none;
+  }
+  .summary-title{
+    display:flex; align-items:center; gap:8px;
+    font-family:var(--ff-head); font-weight:700; font-size:13.5px;
+    text-transform:uppercase; letter-spacing:.06em; color:rgba(255,255,255,0.85);
+    margin-bottom:14px; position:relative;
+  }
+  .summary-grid{ display:flex; flex-direction:column; gap:10px; position:relative; }
+  .summary-line{
+    display:flex; align-items:center; justify-content:space-between;
+    padding-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.14);
+    font-size:12.5px;
+  }
+  .summary-line span.lbl{ color:rgba(255,255,255,0.72); max-width:58%; }
+  .summary-line span.val{ font-weight:700; font-variant-numeric:tabular-nums; font-size:13.5px; }
+  .summary-hero{
+    margin-top:2px; padding-top:2px; text-align:left; position:relative;
+  }
+  .summary-hero .lbl{
+    font-size:11.5px; color:var(--amber); font-weight:700; text-transform:uppercase; letter-spacing:.06em;
+    display:block; margin-bottom:6px;
+  }
+  .summary-hero .val{
+    font-family:var(--ff-head); font-size:28px; font-weight:700; font-variant-numeric:tabular-nums;
+    transition:transform .18s ease;
+  }
+  .summary-hero .val.pulse{ animation:pulse .35s ease; }
+  @keyframes pulse{ 0%{transform:scale(1);} 45%{transform:scale(1.035); color:var(--amber);} 100%{transform:scale(1);} }
+  .summary-hero .formula{ font-size:11px; color:rgba(255,255,255,0.55); margin-top:6px; }
+  .summary-net{
+    margin-top:12px; padding-top:12px; border-top:1px dashed rgba(255,255,255,0.2);
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .summary-net .lbl{ font-size:11.5px; color:rgba(255,255,255,0.65); }
+  .summary-net .val{ font-family:var(--ff-head); font-weight:700; font-size:15px; color:var(--amber-deep); background:#fff; padding:3px 10px; border-radius:8px; }
+
+  .helper-note{
+    font-size:11px; color:var(--muted); text-align:center; padding:6px 24px 18px; line-height:1.5;
+  }
+
+  /* ---------- BOTTOM BAR ---------- */
+  .bottom-bar{
+    position:fixed; left:0; right:0; bottom:0;
+    display:flex; justify-content:center;
+    padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+    pointer-events:none;
+  }
+  .bottom-inner{
+    width:100%; max-width:480px; display:flex; gap:10px; pointer-events:auto;
+  }
+  .btn{
+    flex:1; border:none; border-radius:14px; padding:14px 16px;
+    font-family:var(--ff-head); font-weight:700; font-size:14px;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    cursor:pointer; transition:transform .1s ease, filter .15s ease;
+    box-shadow:var(--shadow-md);
+  }
+  .btn:active{ transform:scale(0.97); }
+  .btn-reset{ background:#fff; color:var(--clay); border:1.5px solid var(--clay); flex:0 0 auto; padding:14px 18px; }
+  .btn-nav{ background:linear-gradient(120deg, var(--navy-light), var(--navy)); color:#fff; }
+  .btn svg{ width:17px;height:17px; }
+
+  /* ---------- MODAL ---------- */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(10,28,45,0.55);
+    display:none; align-items:flex-end; justify-content:center; z-index:50;
+    backdrop-filter:blur(2px);
+  }
+  .modal-overlay.show{ display:flex; }
+  .modal-sheet{
+    width:100%; max-width:480px; background:#fff; border-radius:22px 22px 0 0;
+    padding:22px 22px calc(20px + env(safe-area-inset-bottom));
+    animation:slideUp .22s ease; box-shadow:0 -10px 30px rgba(0,0,0,0.25);
+  }
+  @keyframes slideUp{ from{ transform:translateY(30px); opacity:0;} to{ transform:translateY(0); opacity:1;} }
+  .modal-icon{
+    width:46px;height:46px;border-radius:12px; background:var(--clay-tint); color:var(--clay);
+    display:flex;align-items:center;justify-content:center; margin-bottom:12px;
+  }
+  .modal-sheet h3{ font-family:var(--ff-head); font-size:17px; margin:0 0 6px; }
+  .modal-sheet p{ font-size:13px; color:var(--muted); line-height:1.5; margin:0 0 18px; }
+  .modal-actions{ display:flex; gap:10px; }
+  .modal-actions .btn-cancel{ background:var(--bg); color:var(--ink); flex:1; border-radius:12px; border:none; padding:13px; font-weight:700; font-family:var(--ff-head); font-size:13.5px; }
+  .modal-actions .btn-confirm{ background:var(--clay); color:#fff; flex:1; border-radius:12px; border:none; padding:13px; font-weight:700; font-family:var(--ff-head); font-size:13.5px; }
+
+  /* ---------- TOAST ---------- */
+  .toast{
+    position:fixed; left:50%; bottom:96px; transform:translateX(-50%) translateY(10px);
+    background:var(--navy-deep); color:#fff; padding:11px 18px; border-radius:999px;
+    font-size:12.5px; font-weight:600; box-shadow:var(--shadow-md);
+    opacity:0; pointer-events:none; transition:all .25s ease; z-index:60;
+    display:flex; align-items:center; gap:8px;
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  @media (max-width:360px){
+    h1.title{ font-size:19px; }
+    .summary-hero .val{ font-size:24px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="app-header">
+    <div class="header-top">
+      <div>
+        <span class="eyebrow"><span class="dot"></span>SE2026 · Pendataan Usaha</span>
+        <h1 class="title">Kalkulator Sensus<br/>Ekonomi 2026</h1>
+        <p class="subtitle">Desa Baleharjo & Gebang — alat bantu hitung petugas</p>
+      </div>
+      <button class="icon-btn" id="btnResetTop" title="Reset data" aria-label="Reset data">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="identity-card">
+    <div>
+      <span class="mini-label">Desa</span>
+      <div class="village-toggle" id="villageToggle">
+        <button type="button" data-village="Baleharjo" class="active">Baleharjo</button>
+        <button type="button" data-village="Gebang">Gebang</button>
+      </div>
+    </div>
+    <div class="identity-row">
+      <div>
+        <span class="mini-label">Nama Usaha / Responden</span>
+        <input type="text" class="mini-input" id="namaUsaha" placeholder="Contoh: Warung Bu Sri" />
+      </div>
+      <div>
+        <span class="mini-label">Nama Petugas</span>
+        <input type="text" class="mini-input" id="namaPetugas" placeholder="Nama petugas" />
+      </div>
+    </div>
+  </div>
+
+  <div class="tabs-wrap">
+    <div class="tabs-scroll" id="tabsScroll"></div>
+  </div>
+
+  <main>
+    <div id="panelsContainer"></div>
+
+    <div class="summary-card">
+      <div class="summary-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M3 3v18h18"/><path d="M18.7 8 12 14.7 8.7 11.4 3 17"/></svg>
+        Ringkasan Seluruh Usaha
+      </div>
+      <div class="summary-grid">
+        <div class="summary-line">
+          <span class="lbl">Total Pendapatan 5 Usaha (setahun)</span>
+          <span class="val" id="sumPendapatanTahun">Rp 0</span>
+        </div>
+        <div class="summary-line">
+          <span class="lbl">Total Pengeluaran 5 Usaha (setahun)</span>
+          <span class="val" id="sumPengeluaranTahun">Rp 0</span>
+        </div>
+        <div class="summary-hero">
+          <span class="lbl">Pendapatan Usaha Total (Rata-rata per Bulan)</span>
+          <span class="val" id="rataRataBulan">Rp 0</span>
+          <div class="formula">Total pendapatan 5 usaha setahun ÷ 12 bulan</div>
+        </div>
+        <div class="summary-net">
+          <span class="lbl">Perkiraan pendapatan bersih / bulan</span>
+          <span class="val" id="netBulan">Rp 0</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="helper-note">Kalkulator ini hanya alat bantu hitung — data tidak disimpan maupun dikirim ke server mana pun. Tutup halaman kapan saja untuk menghapus seluruh isian.</p>
+  </main>
+</div>
+
+<div class="bottom-bar">
+  <div class="bottom-inner">
+    <button class="btn btn-reset" id="btnResetBottom">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+      Reset
+    </button>
+    <button class="btn btn-nav" id="btnNext">
+      <span id="btnNextLabel">Lanjut ke Usaha 2</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+    </button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-sheet">
+    <div class="modal-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+    </div>
+    <h3>Reset semua data?</h3>
+    <p>Seluruh isian pengeluaran dan pendapatan untuk Usaha 1–5 akan dikosongkan dan tidak bisa dikembalikan. Lanjutkan?</p>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="btnCancelReset">Batal</button>
+      <button class="btn-confirm" id="btnConfirmReset">Ya, Reset</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><polyline points="20 6 9 17 4 12"></polyline></svg>
+  <span id="toastText">Tersimpan</span>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var EXPENSE_FIELDS = [
+    { id:"upahGaji", label:"Total Upah dan Gaji" },
+    { id:"jaminanSosial", label:"Jaminan Sosial Pegawai" },
+    { id:"biayaProduksi", label:"Biaya Produksi" },
+    { id:"biayaBarangTerjual", label:"Biaya Pembelian Barang yang Terjual" },
+    { id:"biayaOperasional", label:"Biaya Operasional", hint:"Air, listrik, internet, pulsa, pemeliharaan, biaya angkutan, dll" },
+    { id:"biayaNonOperasional", label:"Biaya Non Operasional" }
+  ];
+
+  var INCOME_FIELDS = [
+    { id:"nilaiProduksi", label:"Nilai Produksi/Penjualan/Pendapatan Barang dan Jasa" },
+    { id:"pendapatanLain", label:"Pendapatan Lainnya yang Dihasilkan" }
+  ];
+
+  var TOTAL_USAHA = 5;
+  var activeTab = 1;
+
+  var iconExpense = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"></path><path d="M12 19l-7-7 7-7"></path></svg>';
+  var iconIncome = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg>';
+
+  function fmtRupiah(n){
+    n = Math.round(n || 0);
+    return "Rp " + n.toLocaleString("id-ID");
+  }
+
+  function parseRaw(el){
+    return parseInt(el.getAttribute("data-raw") || "0", 10) || 0;
+  }
+
+  function fieldRowHtml(n, f){
+    return (
+      '<label class="field">' +
+        '<span class="field-label">' + f.label + (f.hint ? '<small>' + f.hint + '</small>' : '') + '</span>' +
+        '<div class="input-wrap">' +
+          '<input type="text" inputmode="numeric" autocomplete="off" class="money" ' +
+            'id="u' + n + '_' + f.id + '" data-raw="0" placeholder="Rp 0" />' +
+        '</div>' +
+      '</label>'
+    );
+  }
+
+  function panelHtml(n){
+    var expRows = EXPENSE_FIELDS.map(function(f){ return fieldRowHtml(n, f); }).join("");
+    var incRows = INCOME_FIELDS.map(function(f){ return fieldRowHtml(n, f); }).join("");
+
+    return (
+    '<div class="panel" id="panel-' + n + '">' +
+
+      '<div class="section-card expense">' +
+        '<div class="section-head">' +
+          '<div class="swatch">' + iconExpense + '</div>' +
+          '<div class="head-text"><h2>Pengeluaran Usaha ' + n + '</h2><p>Biaya yang dikeluarkan usaha ini</p></div>' +
+        '</div>' +
+        '<div class="field-list">' + expRows + '</div>' +
+        '<div class="total-row">' +
+          '<span class="t-label">Total Pengeluaran</span>' +
+          '<span class="t-value" id="u' + n + '_totalPengeluaran" data-raw="0">Rp 0</span>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="section-card income">' +
+        '<div class="section-head">' +
+          '<div class="swatch">' + iconIncome + '</div>' +
+          '<div class="head-text"><h2>Pendapatan Usaha ' + n + '</h2><p>Nilai produksi, penjualan &amp; pendapatan lain</p></div>' +
+        '</div>' +
+        '<div class="field-list">' + incRows + '</div>' +
+        '<div class="total-row">' +
+          '<span class="t-label">Total Nilai Produksi/Penjualan/Pendapatan</span>' +
+          '<span class="t-value" id="u' + n + '_totalPendapatan" data-raw="0">Rp 0</span>' +
+        '</div>' +
+      '</div>' +
+
+    '</div>'
+    );
+  }
+
+  function tabHtml(n){
+    return (
+      '<button type="button" class="tab-btn" id="tab-' + n + '" data-tab="' + n + '">' +
+        '<span class="num">' + n + '</span><span>Usaha ' + n + '</span>' +
+      '</button>'
+    );
+  }
+
+  function buildDom(){
+    var tabsScroll = document.getElementById("tabsScroll");
+    var panelsContainer = document.getElementById("panelsContainer");
+    var tabsHtml = "", panelsHtmlStr = "";
+    for (var n = 1; n <= TOTAL_USAHA; n++){
+      tabsHtml += tabHtml(n);
+      panelsHtmlStr += panelHtml(n);
+    }
+    tabsScroll.innerHTML = tabsHtml;
+    panelsContainer.innerHTML = panelsHtmlStr;
+  }
+
+  function attachMoneyInput(input, onChange){
+    input.addEventListener("input", function(){
+      var raw = input.value.replace(/\D/g, "");
+      raw = raw.replace(/^0+(?=\d)/, "");
+      if (raw){
+        input.setAttribute("data-raw", raw);
+        input.value = fmtRupiah(parseInt(raw, 10));
+      } else {
+        input.setAttribute("data-raw", "0");
+        input.value = "";
+      }
+      onChange();
+    });
+    input.addEventListener("focus", function(){
+      setTimeout(function(){ input.select && input.select(); }, 0);
+    });
+  }
+
+  function pulse(el){
+    el.classList.remove("pulse");
+    void el.offsetWidth;
+    el.classList.add("pulse");
+  }
+
+  function computeUsahaTotals(n){
+    var expSum = 0;
+    EXPENSE_FIELDS.forEach(function(f){
+      var el = document.getElementById("u" + n + "_" + f.id);
+      if (el) expSum += parseRaw(el);
+    });
+    var incSum = 0;
+    INCOME_FIELDS.forEach(function(f){
+      var el = document.getElementById("u" + n + "_" + f.id);
+      if (el) incSum += parseRaw(el);
+    });
+
+    var expEl = document.getElementById("u" + n + "_totalPengeluaran");
+    var incEl = document.getElementById("u" + n + "_totalPendapatan");
+    expEl.textContent = fmtRupiah(expSum);
+    expEl.setAttribute("data-raw", String(expSum));
+    incEl.textContent = fmtRupiah(incSum);
+    incEl.setAttribute("data-raw", String(incSum));
+
+    var tabBtn = document.getElementById("tab-" + n);
+    if (expSum > 0 || incSum > 0){
+      tabBtn.classList.add("filled");
+    } else {
+      tabBtn.classList.remove("filled");
+    }
+
+    computeGlobalSummary();
+  }
+
+  function computeGlobalSummary(){
+    var totalIncomeYear = 0, totalExpenseYear = 0;
+    for (var n = 1; n <= TOTAL_USAHA; n++){
+      var expEl = document.getElementById("u" + n + "_totalPengeluaran");
+      var incEl = document.getElementById("u" + n + "_totalPendapatan");
+      totalExpenseYear += parseRaw(expEl);
+      totalIncomeYear += parseRaw(incEl);
+    }
+    var avgPerMonth = totalIncomeYear / 12;
+    var netPerMonth = (totalIncomeYear - totalExpenseYear) / 12;
+
+    document.getElementById("sumPendapatanTahun").textContent = fmtRupiah(totalIncomeYear);
+    document.getElementById("sumPengeluaranTahun").textContent = fmtRupiah(totalExpenseYear);
+
+    var rataEl = document.getElementById("rataRataBulan");
+    rataEl.textContent = fmtRupiah(avgPerMonth);
+    pulse(rataEl);
+
+    document.getElementById("netBulan").textContent = fmtRupiah(netPerMonth);
+  }
+
+  function showTab(n){
+    activeTab = n;
+    for (var i = 1; i <= TOTAL_USAHA; i++){
+      document.getElementById("panel-" + i).classList.toggle("active", i === n);
+      document.getElementById("tab-" + i).classList.toggle("active", i === n);
+    }
+    var nextLabel = document.getElementById("btnNextLabel");
+    if (n < TOTAL_USAHA){
+      nextLabel.textContent = "Lanjut ke Usaha " + (n + 1);
+    } else {
+      nextLabel.textContent = "Lihat Ringkasan";
+    }
+    document.getElementById("panelsContainer").scrollIntoView({ behavior:"smooth", block:"start" });
+  }
+
+  function wireEvents(){
+    document.getElementById("tabsScroll").addEventListener("click", function(e){
+      var btn = e.target.closest(".tab-btn");
+      if (!btn) return;
+      showTab(parseInt(btn.getAttribute("data-tab"), 10));
+    });
+
+    for (var n = 1; n <= TOTAL_USAHA; n++){
+      (function(n){
+        var panel = document.getElementById("panel-" + n);
+        var inputs = panel.querySelectorAll("input.money");
+        inputs.forEach(function(inp){
+          attachMoneyInput(inp, function(){ computeUsahaTotals(n); });
+        });
+      })(n);
+    }
+
+    document.getElementById("villageToggle").addEventListener("click", function(e){
+      var btn = e.target.closest("button[data-village]");
+      if (!btn) return;
+      this.querySelectorAll("button").forEach(function(b){ b.classList.remove("active"); });
+      btn.classList.add("active");
+    });
+
+    document.getElementById("btnNext").addEventListener("click", function(){
+      if (activeTab < TOTAL_USAHA){
+        showTab(activeTab + 1);
+      } else {
+        document.querySelector(".summary-card").scrollIntoView({ behavior:"smooth", block:"center" });
+      }
+    });
+
+    document.getElementById("btnResetTop").addEventListener("click", openModal);
+    document.getElementById("btnResetBottom").addEventListener("click", openModal);
+    document.getElementById("btnCancelReset").addEventListener("click", closeModal);
+    document.getElementById("modalOverlay").addEventListener("click", function(e){
+      if (e.target === this) closeModal();
+    });
+    document.getElementById("btnConfirmReset").addEventListener("click", resetAll);
+  }
+
+  function openModal(){
+    document.getElementById("modalOverlay").classList.add("show");
+  }
+  function closeModal(){
+    document.getElementById("modalOverlay").classList.remove("show");
+  }
+
+  var toastTimer = null;
+  function showToast(msg){
+    var t = document.getElementById("toast");
+    document.getElementById("toastText").textContent = msg;
+    t.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ t.classList.remove("show"); }, 2200);
+  }
+
+  function resetAll(){
+    document.querySelectorAll("input.money").forEach(function(inp){
+      inp.value = "";
+      inp.setAttribute("data-raw", "0");
+    });
+    document.getElementById("namaUsaha").value = "";
+    document.getElementById("namaPetugas").value = "";
+    for (var n = 1; n <= TOTAL_USAHA; n++){
+      computeUsahaTotals(n);
+    }
+    computeGlobalSummary();
+    closeModal();
+    showTab(1);
+    showToast("Semua data telah direset");
+  }
+
+  function init(){
+    buildDom();
+    wireEvents();
+    showTab(1);
+    computeGlobalSummary();
+  }
+
+  document.addEventListener("DOMContentLoaded", init);
+})();
+</script>
+</body>
+</html>
