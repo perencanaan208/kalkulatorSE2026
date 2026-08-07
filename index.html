@@ -207,18 +207,28 @@
   .input-wrap{ position:relative; }
   input.money{
     width:100%; border:1.5px solid var(--border); border-radius:var(--radius-sm);
-    padding:11px 13px; font-family:var(--ff-body); font-weight:700; font-size:14.5px;
+    padding:11px 46px 11px 13px; font-family:var(--ff-body); font-weight:700; font-size:14.5px;
     color:var(--navy-deep); background:var(--bg);
     font-variant-numeric:tabular-nums;
     transition:border-color .15s ease, background .15s ease;
   }
   input.money::placeholder{ color:#9FB2C2; font-weight:500; }
   input.money:focus{ outline:none; border-color:var(--navy-light); background:#fff; box-shadow:0 0 0 3px rgba(29,111,165,0.12); }
+  .calc-trigger{
+    position:absolute; right:6px; top:50%; transform:translateY(-50%);
+    width:32px; height:32px; border-radius:8px; border:none; cursor:pointer;
+    background:var(--navy-light); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    transition:background .15s ease, transform .1s ease;
+  }
+  .calc-trigger:active{ transform:translateY(-50%) scale(0.92); background:var(--navy); }
+  .calc-trigger svg{ width:16px; height:16px; }
 
   .total-row{
     display:flex; align-items:center; justify-content:space-between;
-    margin:4px 16px 16px; padding:13px 14px; border-radius:var(--radius-md);
+    margin:4px 16px 8px; padding:13px 14px; border-radius:var(--radius-md);
   }
+  .section-card > .total-row:last-of-type{ margin-bottom:16px; }
   .section-card.expense .total-row{ background:var(--clay-tint); }
   .section-card.income .total-row{ background:var(--green-tint); }
   .total-row .t-label{ font-size:12.5px; font-weight:700; color:var(--muted); }
@@ -227,6 +237,8 @@
   }
   .section-card.expense .total-row .t-value{ color:var(--clay); }
   .section-card.income .total-row .t-value{ color:var(--green); }
+  .section-card.expense .total-row.laba-row{ background:var(--amber-tint); }
+  .section-card.expense .total-row.laba-row .t-value{ color:var(--amber-deep); }
 
   /* ---------- SUMMARY ---------- */
   .summary-card{
@@ -325,6 +337,40 @@
   .modal-actions .btn-cancel{ background:var(--bg); color:var(--ink); flex:1; border-radius:12px; border:none; padding:13px; font-weight:700; font-family:var(--ff-head); font-size:13.5px; }
   .modal-actions .btn-confirm{ background:var(--clay); color:#fff; flex:1; border-radius:12px; border:none; padding:13px; font-weight:700; font-family:var(--ff-head); font-size:13.5px; }
 
+  /* ---------- CALCULATOR MODAL ---------- */
+  .calc-sheet{ padding-bottom:calc(18px + env(safe-area-inset-bottom)); }
+  .calc-header{ display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+  .calc-header h3{ font-family:var(--ff-head); font-size:15px; margin:0; }
+  .calc-close{
+    width:32px;height:32px;border-radius:9px; border:none; background:var(--bg); color:var(--muted);
+    display:flex;align-items:center;justify-content:center; cursor:pointer;
+  }
+  .calc-field-name{ font-size:11.5px; color:var(--muted); margin:0 0 10px; }
+  .calc-display{
+    background:var(--navy-deep); color:#fff; border-radius:14px;
+    padding:18px 16px; text-align:right; margin-bottom:12px;
+    font-family:var(--ff-head); font-size:26px; font-weight:700; font-variant-numeric:tabular-nums;
+    overflow-x:auto; white-space:nowrap;
+  }
+  .calc-expr{ font-size:11.5px; color:rgba(255,255,255,0.55); display:block; margin-bottom:2px; min-height:14px; }
+  .calc-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:10px; }
+  .calc-key{
+    border:none; border-radius:12px; background:var(--bg); color:var(--ink);
+    font-family:var(--ff-head); font-weight:700; font-size:17px;
+    padding:15px 0; cursor:pointer; transition:transform .08s ease, background .12s ease;
+  }
+  .calc-key:active{ transform:scale(0.94); }
+  .calc-key.op{ background:var(--amber-tint); color:var(--amber-deep); }
+  .calc-key.fn{ background:var(--clay-tint); color:var(--clay); font-size:14px; }
+  .calc-key.zero{ grid-column:span 2; }
+  .calc-key.equals{
+    grid-column:span 4; background:var(--navy); color:#fff; padding:15px 0; font-size:16px;
+  }
+  .calc-apply{
+    background:var(--green); color:#fff; flex:1; border-radius:12px; border:none; padding:13px;
+    font-weight:700; font-family:var(--ff-head); font-size:13.5px;
+  }
+
   /* ---------- TOAST ---------- */
   .toast{
     position:fixed; left:50%; bottom:96px; transform:translateX(-50%) translateY(10px);
@@ -398,14 +444,10 @@
           <span class="lbl">Total Pengeluaran 5 Usaha (setahun)</span>
           <span class="val" id="sumPengeluaranTahun">Rp 0</span>
         </div>
-        <div class="summary-line">
-          <span class="lbl">Total Laba Usaha (setahun)</span>
-          <span class="val" id="sumLabaUsaha">Rp 0</span>
-        </div>
         <div class="summary-hero">
           <span class="lbl">Pendapatan Usaha Total (Rata-rata per Bulan)</span>
           <span class="val" id="rataRataBulan">Rp 0</span>
-          <div class="formula">Total laba usaha setahun ÷ 12 bulan</div>
+          <div class="formula">Total laba 5 usaha setahun (pendapatan − pengeluaran) ÷ 12 bulan</div>
         </div>
       </div>
     </div>
@@ -437,6 +479,50 @@
     <div class="modal-actions">
       <button class="btn-cancel" id="btnCancelReset">Batal</button>
       <button class="btn-confirm" id="btnConfirmReset">Ya, Reset</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="calcModalOverlay">
+  <div class="modal-sheet calc-sheet">
+    <div class="calc-header">
+      <h3>Kalkulator Bantu Hitung</h3>
+      <button class="calc-close" id="calcCloseBtn" aria-label="Tutup kalkulator">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+    <p class="calc-field-name" id="calcFieldName">Untuk kolom: —</p>
+    <div class="calc-display">
+      <span class="calc-expr" id="calcExpr">&nbsp;</span>
+      <span id="calcDisplay">0</span>
+    </div>
+    <div class="calc-grid">
+      <button class="calc-key fn" data-key="clear">C</button>
+      <button class="calc-key fn" data-key="back">⌫</button>
+      <button class="calc-key op" data-key="/">÷</button>
+      <button class="calc-key op" data-key="*">×</button>
+
+      <button class="calc-key" data-key="7">7</button>
+      <button class="calc-key" data-key="8">8</button>
+      <button class="calc-key" data-key="9">9</button>
+      <button class="calc-key op" data-key="-">−</button>
+
+      <button class="calc-key" data-key="4">4</button>
+      <button class="calc-key" data-key="5">5</button>
+      <button class="calc-key" data-key="6">6</button>
+      <button class="calc-key op" data-key="+">+</button>
+
+      <button class="calc-key" data-key="1">1</button>
+      <button class="calc-key" data-key="2">2</button>
+      <button class="calc-key" data-key="3">3</button>
+      <button class="calc-key" data-key="000">000</button>
+
+      <button class="calc-key zero" data-key="0">0</button>
+      <button class="calc-key equals" data-key="=">=</button>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="calcCancelBtn">Batal</button>
+      <button class="calc-apply" id="calcApplyBtn">Gunakan Hasil</button>
     </div>
   </div>
 </div>
@@ -479,13 +565,17 @@
     return parseInt(el.getAttribute("data-raw") || "0", 10) || 0;
   }
 
+  var iconPlus = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>';
+
   function fieldRowHtml(n, f){
+    var fieldId = "u" + n + "_" + f.id;
     return (
       '<label class="field">' +
         '<span class="field-label">' + f.label + (f.hint ? '<small>' + f.hint + '</small>' : '') + '</span>' +
         '<div class="input-wrap">' +
           '<input type="text" inputmode="numeric" autocomplete="off" class="money" ' +
-            'id="u' + n + '_' + f.id + '" data-raw="0" placeholder="Rp 0" />' +
+            'id="' + fieldId + '" data-raw="0" placeholder="Rp 0" />' +
+          '<button type="button" class="calc-trigger" data-target="' + fieldId + '" data-label="' + f.label + '" aria-label="Buka kalkulator untuk ' + f.label + '">' + iconPlus + '</button>' +
         '</div>' +
       '</label>'
     );
@@ -507,6 +597,10 @@
         '<div class="total-row">' +
           '<span class="t-label">Total Pengeluaran</span>' +
           '<span class="t-value" id="u' + n + '_totalPengeluaran" data-raw="0">Rp 0</span>' +
+        '</div>' +
+        '<div class="total-row laba-row">' +
+          '<span class="t-label">Total Laba Usaha</span>' +
+          '<span class="t-value" id="u' + n + '_totalLaba" data-raw="0">Rp 0</span>' +
         '</div>' +
       '</div>' +
 
@@ -584,10 +678,14 @@
 
     var expEl = document.getElementById("u" + n + "_totalPengeluaran");
     var incEl = document.getElementById("u" + n + "_totalPendapatan");
+    var labaEl = document.getElementById("u" + n + "_totalLaba");
     expEl.textContent = fmtRupiah(expSum);
     expEl.setAttribute("data-raw", String(expSum));
     incEl.textContent = fmtRupiah(incSum);
     incEl.setAttribute("data-raw", String(incSum));
+    var labaSum = incSum - expSum;
+    labaEl.textContent = fmtRupiah(labaSum);
+    labaEl.setAttribute("data-raw", String(labaSum));
 
     var tabBtn = document.getElementById("tab-" + n);
     if (expSum > 0 || incSum > 0){
@@ -607,16 +705,138 @@
       totalExpenseYear += parseRaw(expEl);
       totalIncomeYear += parseRaw(incEl);
     }
-    var totalLabaUsaha = totalIncomeYear - totalExpenseYear;
-    var avgPerMonth = totalLabaUsaha / 12;
+    var totalLabaYear = totalIncomeYear - totalExpenseYear;
+    var avgPerMonth = totalLabaYear / 12;
 
     document.getElementById("sumPendapatanTahun").textContent = fmtRupiah(totalIncomeYear);
     document.getElementById("sumPengeluaranTahun").textContent = fmtRupiah(totalExpenseYear);
-    document.getElementById("sumLabaUsaha").textContent = fmtRupiah(totalLabaUsaha);
 
     var rataEl = document.getElementById("rataRataBulan");
     rataEl.textContent = fmtRupiah(avgPerMonth);
     pulse(rataEl);
+  }
+
+  /* ---------- MINI CALCULATOR ---------- */
+  var calcTargetInput = null;
+  var calcState = { display:"0", firstOperand:null, operator:null, waitingForSecond:false, exprText:"" };
+  var OP_SYMBOL = { "+":"+", "-":"−", "*":"×", "/":"÷" };
+
+  function calcUpdateDisplay(){
+    var n = parseInt(calcState.display, 10) || 0;
+    document.getElementById("calcDisplay").textContent = n.toLocaleString("id-ID");
+    document.getElementById("calcExpr").textContent = calcState.exprText || "\u00A0";
+  }
+
+  function calcInputDigit(d){
+    if (calcState.waitingForSecond){
+      calcState.display = d;
+      calcState.waitingForSecond = false;
+    } else {
+      calcState.display = (calcState.display === "0") ? d : calcState.display + d;
+    }
+    if (calcState.display.length > 15) calcState.display = calcState.display.slice(0, 15);
+    calcUpdateDisplay();
+  }
+
+  function calcCompute(){
+    if (calcState.operator === null || calcState.firstOperand === null) return;
+    var a = calcState.firstOperand;
+    var b = parseInt(calcState.display, 10) || 0;
+    var result = 0;
+    switch (calcState.operator){
+      case "+": result = a + b; break;
+      case "-": result = a - b; break;
+      case "*": result = a * b; break;
+      case "/": result = b !== 0 ? a / b : 0; break;
+    }
+    result = Math.round(result);
+    calcState.display = String(result);
+    calcState.firstOperand = null;
+    calcState.operator = null;
+    calcState.waitingForSecond = false;
+    calcState.exprText = "";
+  }
+
+  function calcInputOperator(op){
+    if (calcState.operator !== null && !calcState.waitingForSecond){
+      calcCompute();
+      calcState.firstOperand = parseInt(calcState.display, 10) || 0;
+    } else {
+      calcState.firstOperand = parseInt(calcState.display, 10) || 0;
+    }
+    calcState.operator = op;
+    calcState.waitingForSecond = true;
+    calcState.exprText = calcState.firstOperand.toLocaleString("id-ID") + " " + OP_SYMBOL[op];
+    calcUpdateDisplay();
+  }
+
+  function calcEquals(){
+    if (calcState.operator === null) return;
+    var exprBefore = calcState.exprText + " " + (parseInt(calcState.display,10)||0).toLocaleString("id-ID");
+    calcCompute();
+    calcState.exprText = exprBefore + " =";
+    calcUpdateDisplay();
+  }
+
+  function calcClear(){
+    calcState = { display:"0", firstOperand:null, operator:null, waitingForSecond:false, exprText:"" };
+    calcUpdateDisplay();
+  }
+
+  function calcBackspace(){
+    if (calcState.waitingForSecond) return;
+    calcState.display = calcState.display.length > 1 ? calcState.display.slice(0, -1) : "0";
+    calcUpdateDisplay();
+  }
+
+  function openCalcModal(inputEl){
+    calcTargetInput = inputEl;
+    calcClear();
+    var label = inputEl.closest(".field").querySelector(".field-label").childNodes[0].textContent.trim();
+    document.getElementById("calcFieldName").textContent = "Untuk kolom: " + label;
+    document.getElementById("calcModalOverlay").classList.add("show");
+  }
+
+  function closeCalcModal(){
+    document.getElementById("calcModalOverlay").classList.remove("show");
+    calcTargetInput = null;
+  }
+
+  function calcApplyResult(){
+    if (calcState.operator !== null) calcCompute();
+    if (!calcTargetInput) { closeCalcModal(); return; }
+    var raw = Math.max(0, parseInt(calcState.display, 10) || 0);
+    calcTargetInput.value = fmtRupiah(raw);
+    calcTargetInput.dispatchEvent(new Event("input", { bubbles:true }));
+    closeCalcModal();
+    showToast("Hasil kalkulator dimasukkan ke kolom");
+  }
+
+  function initCalculator(){
+    document.getElementById("panelsContainer").addEventListener("click", function(e){
+      var btn = e.target.closest(".calc-trigger");
+      if (!btn) return;
+      var input = document.getElementById(btn.getAttribute("data-target"));
+      if (input) openCalcModal(input);
+    });
+
+    document.querySelectorAll(".calc-key").forEach(function(key){
+      key.addEventListener("click", function(){
+        var k = key.getAttribute("data-key");
+        if (k === "clear") calcClear();
+        else if (k === "back") calcBackspace();
+        else if (k === "=") calcEquals();
+        else if (k === "+" || k === "-" || k === "*" || k === "/") calcInputOperator(k);
+        else calcInputDigit(k);
+      });
+    });
+
+    document.getElementById("calcApplyBtn").addEventListener("click", calcApplyResult);
+    document.getElementById("calcCancelBtn").addEventListener("click", closeCalcModal);
+    document.getElementById("calcCloseBtn").addEventListener("click", closeCalcModal);
+    document.getElementById("calcModalOverlay").addEventListener("click", function(e){
+      if (e.target === this) closeCalcModal();
+    });
   }
 
   function showTab(n){
@@ -710,6 +930,7 @@
   function init(){
     buildDom();
     wireEvents();
+    initCalculator();
     showTab(1);
     computeGlobalSummary();
   }
